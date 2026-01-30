@@ -1,0 +1,20 @@
+# dependencies
+node_modules
+package-lock.json
+
+# production
+dist
+build
+
+# misc
+.DS_Store
+*.log
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
