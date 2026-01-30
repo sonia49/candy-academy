@@ -19,25 +19,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4 # Mis à jour en v4
+        uses: actions/checkout@v4
       
       - name: Setup Node
-        uses: actions/setup-node@v4 # Mis à jour en v4
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          # Le cache a été supprimé pour éviter l'erreur "lock file not found"
           
       - name: Install dependencies
-        run: npm install # Changé npm ci en npm install pour plus de souplesse
+        run: npm install
         
       - name: Build
         run: npm run build
         
       - name: Setup Pages
-        uses: actions/configure-pages@v4 # Mis à jour en v4
+        uses: actions/configure-pages@v4
         
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3 # Mis à jour en v3 (spécial Pages)
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
@@ -50,4 +50,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 # Mis à jour en v4
+        uses: actions/deploy-pages@v4
