@@ -7,135 +7,135 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjYndlaGl3am93Z3RoYXpyeWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkzNTg4NjIsImV4cCI6MjA4NDkzNDg2Mn0.2nP42Uh262Jt-1stolzSVM8_EEzrAdCutKgd7B2MurY'
 );
 
-// --- TES 60 EXERCICES ---
+// --- TES 60 EXERCICES (20 PAR MATIÈRE) ---
 const QUESTIONS = {
-  math: { '6ème': Array(20).fill({ q: "15 × 12 ?", r: "180" }).map((ex, i) => i === 0 ? ex : { q: `Calcul n°${i+1} : ${10+i} + ${5+i}`, r: `${15+(2*i)}` }) },
-  french: { '6ème': Array(20).fill({ q: "Nature de 'vite' ?", r: "adverbe" }) },
-  english: { '6ème': Array(20).fill({ q: "Dog ?", r: "chien" }) }
+  math: {
+    '6ème': [
+      { q: "15 × 12 ?", r: "180" }, { q: "456 + 789 ?", r: "1245" }, { q: "144 ÷ 12 ?", r: "12" }, { q: "25 × 4 ?", r: "100" }, { q: "Moitié de 50 ?", r: "25" },
+      { q: "1/4 de 100 ?", r: "25" }, { q: "2.5 + 3.5 ?", r: "6" }, { q: "Côtés hexagone ?", r: "6" }, { q: "Périmètre carré côté 5 ?", r: "20" }, { q: "Angles droits carré ?", r: "4" },
+      { q: "1000 - 1 ?", r: "999" }, { q: "Double de 15 ?", r: "30" }, { q: "0.5 × 10 ?", r: "5" }, { q: "Côtés triangle ?", r: "3" }, { q: "100 ÷ 4 ?", r: "25" },
+      { q: "9 × 8 ?", r: "72" }, { q: "7 × 7 ?", r: "49" }, { q: "Rayon si diamètre 10 ?", r: "5" }, { q: "3 × 3 × 3 ?", r: "27" }, { q: "150 + 150 ?", r: "300" }
+    ]
+  },
+  french: {
+    '6ème': [
+      { q: "Nature de 'vite' ?", r: "adverbe" }, { q: "COD : 'Il lit un livre'", r: "un livre" }, { q: "Sujet : 'La pluie tombe'", r: "la pluie" }, { q: "Faire (nous, présent) ?", r: "faisons" }, { q: "Avoir (je, imparfait) ?", r: "avais" },
+      { q: "Futur 'aller' (tu) ?", r: "iras" }, { q: "Pluriel 'journal' ?", r: "journaux" }, { q: "Féminin 'boulanger' ?", r: "boulangère" }, { q: "Synonyme 'triste' ?", r: "malheureux" }, { q: "Contraire 'chaud' ?", r: "froid" },
+      { q: "Infinitif 'dormons' ?", r: "dormir" }, { q: "Type : 'Sortez !'", r: "imperative" }, { q: "Féminin 'lion' ?", r: "lionne" }, { q: "Syllabes 'bateau' ?", r: "2" }, { q: "Pluriel 'gaz' ?", r: "gaz" },
+      { q: "Contraire 'petit' ?", r: "grand" }, { q: "Sujet 'Tu chantes' ?", r: "tu" }, { q: "Nature 'belle' ?", r: "adjectif" }, { q: "Verbe 'Il finit' ?", r: "finit" }, { q: "Synonyme 'joyeux' ?", r: "heureux" }
+    ]
+  },
+  english: {
+    '6ème': [
+      { q: "Dog ?", r: "chien" }, { q: "Cat ?", r: "chat" }, { q: "House ?", r: "maison" }, { q: "School ?", r: "école" }, { q: "15 ?", r: "fifteen" },
+      { q: "Red ?", r: "rouge" }, { q: "Blue ?", r: "bleu" }, { q: "I (to be) happy ?", r: "am" }, { q: "He (to have) a dog ?", r: "has" }, { q: "Family ?", r: "famille" },
+      { q: "Apple ?", r: "pomme" }, { q: "Book ?", r: "livre" }, { q: "Hello ?", r: "bonjour" }, { q: "Thank you ?", r: "merci" }, { q: "Yellow ?", r: "jaune" },
+      { q: "Green ?", r: "vert" }, { q: "Brother ?", r: "frère" }, { q: "Sister ?", r: "soeur" }, { q: "Sun ?", r: "soleil" }, { q: "Water ?", r: "eau" }
+    ]
+  }
 };
-// Note: J'ai raccourci l'affichage ici pour la clarté, mais garde bien tes listes complètes dans ton fichier.
 
 function App() {
+  const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [gameMode, setGameMode] = useState('menu');
+  const [screen, setScreen] = useState('auth'); // auth, menu, quiz
   const [category, setCategory] = useState('math');
-  const [level, setLevel] = useState('6ème');
   const [currentQ, setCurrentQ] = useState(0);
   const [answer, setAnswer] = useState('');
-  const [showResult, setShowResult] = useState(null);
-  const [selectedAvatar, setSelectedAvatar] = useState(localStorage.getItem('avatar') || '🧁');
 
-  // --- LE RADAR DE SESSION (LE SECRET) ---
-  useEffect(() => {
-    // 1. On vérifie la session actuelle au chargement
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) fetchProfile(session.user.id);
-      else setLoading(false);
-    });
-
-    // 2. On écoute les changements (Connexion / Déconnexion)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("Changement d'état Auth:", _event);
-      if (session) fetchProfile(session.user.id);
-      else {
-        setProfile(null);
-        setLoading(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const fetchProfile = async (userId) => {
-    console.log("Récupération du profil pour:", userId);
-    try {
-      let { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
-      
-      if (error && error.code === 'PGRST116') { // Profil inexistant
-        console.log("Création d'un nouveau profil...");
-        const { data: newProf } = await supabase.from('profiles').insert([
-          { id: userId, email: username || 'Élève', diamonds: 100, level: 1, streak: 0 }
-        ]).select().single();
-        setProfile(newProf);
-      } else {
-        setProfile(data);
-      }
-    } catch (err) {
-      console.error("Erreur fetchProfile:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAuth = async (type) => {
-    setLoading(true);
-    const email = `${username.toLowerCase().trim()}@candy.app`;
+  // 1. Charger le profil dès qu'on a un utilisateur
+  const loadProfile = async (userId) => {
+    let { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
     
-    const { error } = type === 'signup' 
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      alert("Erreur: " + error.message);
-      setLoading(false);
+    // SI LE PROFIL N'EXISTE PAS ENCORE (Nouveau joueur)
+    if (error || !data) {
+      const { data: newProf } = await supabase.from('profiles').insert([
+        { id: userId, email: username || "Joueur", diamonds: 100, level: 1, streak: 0 }
+      ]).select().single();
+      setProfile(newProf);
+    } else {
+      setProfile(data);
     }
-    // Pas besoin de setProfile ici, le "onAuthStateChange" s'en occupe !
+    setScreen('menu');
   };
 
-  // --- RENDU CONDITIONNEL ---
-  if (loading) return <div className="app"><h1>Chargement magique... ✨</h1></div>;
+  // 2. Connexion / Inscription
+  const handleAuth = async (type) => {
+    const email = `${username.toLowerCase().trim()}@candy.app`;
+    let result;
+    
+    if (type === 'signup') {
+      result = await supabase.auth.signUp({ email, password });
+      if (!result.error) alert("Compte créé ! Connecte-toi.");
+    } else {
+      result = await supabase.auth.signInWithPassword({ email, password });
+      if (result.data?.user) {
+        setUser(result.data.user);
+        loadProfile(result.data.user.id);
+      }
+    }
+    if (result.error) alert(result.error.message);
+  };
 
-  // SI PAS DE PROFIL -> ÉCRAN AUTH (TON VISUEL)
-  if (!profile) {
+  // --- INTERFACE ---
+
+  if (screen === 'auth') {
     return (
-      <div className="app">
-        <div className="auth-container">
-          <h1 className="logo">🍭 Candy Academy 🍬</h1>
-          <input className="input-candy" placeholder="Pseudo" value={username} onChange={e => setUsername(e.target.value)} />
-          <input className="input-candy" type="password" placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)} />
-          <button onClick={() => handleAuth('login')} className="btn-primary">SE CONNECTER</button>
-          <button onClick={() => handleAuth('signup')} className="btn-secondary">CRÉER COMPTE</button>
+      <div className="app auth-bg">
+        <h1 className="logo">🍭 Candy Academy</h1>
+        <div className="auth-card">
+          <input placeholder="Pseudo" onChange={e => setUsername(e.target.value)} className="input-candy" />
+          <input type="password" placeholder="Mot de passe" onChange={e => setPassword(e.target.value)} className="input-candy" />
+          <button onClick={() => handleAuth('login')} className="btn-primary">ENTRER 🚀</button>
+          <button onClick={() => handleAuth('signup')} className="btn-secondary">S'INSCRIRE ✨</button>
         </div>
       </div>
     );
   }
 
-  // SI PROFIL EXISTE -> TON DASHBOARD VISUEL
-  return (
-    <div className="app">
-      {gameMode === 'menu' ? (
-        <div className="dashboard">
-          <div className="header">
-            <div className="avatar-big">{selectedAvatar}</div>
-            <div className="user-info">
-              <h2>{profile.email?.toUpperCase()}</h2>
-              <div className="badges">
-                <span className="badge">💎 {profile.diamonds}</span>
-                <span className="badge">🔥 {profile.streak}</span>
-              </div>
-            </div>
-            <button onClick={() => supabase.auth.signOut()} className="logout-mini">🚪</button>
-          </div>
-          
-          <div className="game-buttons">
-            <button className="game-btn math-btn" onClick={() => { setGameMode('quiz'); setCategory('math'); }}>🍩 MATHS</button>
-            <button className="game-btn french-btn" onClick={() => { setGameMode('quiz'); setCategory('french'); }}>🍬 FRANÇAIS</button>
-            <button className="game-btn english-btn" onClick={() => { setGameMode('quiz'); setCategory('english'); }}>🍦 ENGLISH</button>
-          </div>
+  if (screen === 'menu' && profile) {
+    return (
+      <div className="app">
+        <div className="header">
+          <span>💎 {profile.diamonds}</span>
+          <span>🔥 {profile.streak}</span>
+          <button onClick={() => setScreen('auth')}>🚪</button>
         </div>
-      ) : (
-        <div className="quiz-container">
-          <button onClick={() => setGameMode('menu')}>← Retour</button>
-          <h2>{QUESTIONS[category][level][currentQ].q}</h2>
-          <input className="answer-input" value={answer} onChange={e => setAnswer(e.target.value)} autoFocus />
-          <button className="btn-primary" onClick={() => {/* Logique check ici */}}>VALIDER</button>
+        <div className="menu-grid">
+          <button onClick={() => {setCategory('math'); setScreen('quiz')}} className="card">🍩 MATHS</button>
+          <button onClick={() => {setCategory('french'); setScreen('quiz')}} className="card">🍬 FRANÇAIS</button>
+          <button onClick={() => {setCategory('english'); setScreen('quiz')}} className="card">🍦 ANGLAIS</button>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
+
+  if (screen === 'quiz') {
+    const q = QUESTIONS[category]['6ème'][currentQ];
+    return (
+      <div className="app">
+        <button onClick={() => setScreen('menu')}>← Retour</button>
+        <div className="quiz-box">
+          <h2>{q.q}</h2>
+          <input value={answer} onChange={e => setAnswer(e.target.value)} className="answer-input" />
+          <button onClick={() => {
+            if (answer.toLowerCase().trim() === q.r.toLowerCase().trim()) {
+              alert("BRAVO ! +15 💎");
+              setProfile({...profile, diamonds: profile.diamonds + 15});
+              setCurrentQ((currentQ + 1) % 20);
+              setAnswer('');
+            } else {
+              alert("Essaye encore !");
+            }
+          }} className="btn-primary">VALIDER</button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }
 
 export default App;
