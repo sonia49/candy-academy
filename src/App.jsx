@@ -70,11 +70,26 @@ function App() {
   const [capitalScore, setCapitalScore] = useState(0);
   const [selectedAvatar, setSelectedAvatar] = useState('🧁');
   const [showSettings, setShowSettings] = useState(false);
+  
+  // NOUVEAU : Temps d'utilisation
+  const [timeElapsed, setTimeElapsed] = useState(0);
 
   useEffect(() => {
     const saved = localStorage.getItem('selectedAvatar');
     if (saved) setSelectedAvatar(saved);
+    
+    // Timer
+    const timer = setInterval(() => {
+      setTimeElapsed(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}m ${secs}s`;
+  };
 
   const handleAuth = async (type) => {
     if (!username || password.length < 6) {
@@ -86,20 +101,16 @@ function App() {
     if (type === 'signup') {
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) return alert("❌ " + error.message);
-      
       await supabase.from('profiles').insert([{ id: data.user.id, email: username, diamonds: 100, level: 1, streak: 0 }]);
       alert("✨ Compte créé ! Connecte-toi maintenant.");
     } else {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) return alert("❌ Pseudo ou mot de passe incorrect");
-
       let { data: prof } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
-      
       if (!prof) {
         const { data: nP } = await supabase.from('profiles').insert([{ id: data.user.id, email: username, diamonds: 100, level: 1, streak: 0 }]).select().single();
         prof = nP;
       }
-      
       setProfile(prof);
       setScreen('dashboard');
     }
@@ -113,12 +124,10 @@ function App() {
     if (userAns === correct) {
       setShowResult('correct');
       if (window.confetti) window.confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-
       const updatedProfile = { ...profile, diamonds: profile.diamonds + 15, streak: profile.streak + 1 };
       await supabase.from('profiles').update({ diamonds: updatedProfile.diamonds, streak: updatedProfile.streak }).eq('id', profile.id);
       setProfile(updatedProfile);
       setStats(s => ({...s, correct: s.correct + 1, total: s.total + 1}));
-
       setTimeout(() => {
         setShowResult(null);
         setCurrentQ((currentQ + 1) % questions.length);
@@ -131,14 +140,27 @@ function App() {
     }
   };
 
-  const handleCapitalAnswer = (selected) => {
+  // RÉPARÉ : handleCapitalAnswer
+  const handleCapitalAnswer = async (selected) => {
     const isCorrect = selected === CAPITALS_GAME[currentCapital].capital;
-    if (isCorrect) setCapitalScore(s => s + 1);
+    
+    if (isCorrect) {
+      if (window.confetti) window.confetti({ particleCount: 50, spread: 60 });
+      setCapitalScore(s => s + 1);
+      
+      // Bonus diamants pour bonne réponse capitale
+      const updatedProfile = { ...profile, diamonds: profile.diamonds + 5 };
+      await supabase.from('profiles').update({ diamonds: updatedProfile.diamonds }).eq('id', profile.id);
+      setProfile(updatedProfile);
+    }
+
     if (currentCapital < CAPITALS_GAME.length - 1) {
-      setTimeout(() => setCurrentCapital(c => c + 1), 1000);
+      setCurrentCapital(c => c + 1);
     } else {
-      alert(`Score : ${capitalScore + (isCorrect ? 1 : 0)}/10`);
+      alert(`Terminé ! Score : ${capitalScore + (isCorrect ? 1 : 0)}/10`);
       setGameMode('menu');
+      setCurrentCapital(0);
+      setCapitalScore(0);
     }
   };
 
@@ -169,14 +191,15 @@ function App() {
               <div className="badges">
                 <span className="badge">💎 {profile?.diamonds}</span>
                 <span className="badge">🔥 {profile?.streak}</span>
+                <span className="badge">⏱️ {formatTime(timeElapsed)}</span>
               </div>
             </div>
           </div>
           <div className="game-buttons">
-            <button className="game-btn math-btn" onClick={() => { setGameMode('quiz'); setCategory('math'); }}>🍩 MATHS</button>
-            <button className="game-btn french-btn" onClick={() => { setGameMode('quiz'); setCategory('french'); }}>🍬 FRANÇAIS</button>
-            <button className="game-btn english-btn" onClick={() => { setGameMode('quiz'); setCategory('english'); }}>🍦 ENGLISH</button>
-            <button className="game-btn world-btn" onClick={() => setGameMode('capitals')}>🌍 CAPITALES</button>
+            <button className="game-btn math-btn" onClick={() => { setGameMode('quiz'); setCategory('math'); setCurrentQ(0); }}>🍩 MATHS</button>
+            <button className="game-btn french-btn" onClick={() => { setGameMode('quiz'); setCategory('french'); setCurrentQ(0); }}>🍬 FRANÇAIS</button>
+            <button className="game-btn english-btn" onClick={() => { setGameMode('quiz'); setCategory('english'); setCurrentQ(0); }}>🍦 ENGLISH</button>
+            <button className="game-btn world-btn" onClick={() => { setGameMode('capitals'); setCurrentCapital(0); setCapitalScore(0); }}>🌍 CAPITALES</button>
           </div>
         </div>
         {showSettings && (
@@ -199,9 +222,12 @@ function App() {
        {gameMode === 'quiz' ? (
          <div className="quiz-container">
            <button onClick={() => setGameMode('menu')}>← Retour</button>
+           <div className="progress-bar-container">
+              <div className="progress-bar-fill" style={{ width: `${((currentQ) / QUESTIONS[category][level].length) * 100}%` }}></div>
+           </div>
            <div className="level-selector">
-              <button onClick={() => setLevel('6ème')} className={level === '6ème' ? 'active' : ''}>6ème</button>
-              <button onClick={() => setLevel('5ème')} className={level === '5ème' ? 'active' : ''}>5ème</button>
+              <button onClick={() => {setLevel('6ème'); setCurrentQ(0)}} className={level === '6ème' ? 'active' : ''}>6ème</button>
+              <button onClick={() => {setLevel('5ème'); setCurrentQ(0)}} className={level === '5ème' ? 'active' : ''}>5ème</button>
            </div>
            <h2>{QUESTIONS[category][level][currentQ]?.q}</h2>
            <input className="answer-input" value={answer} onChange={e => setAnswer(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleCheckAnswer()} />
@@ -211,9 +237,16 @@ function App() {
        ) : (
          <div className="quiz-container">
            <button onClick={() => setGameMode('menu')}>← Retour</button>
+           <div className="progress-bar-container">
+              <div className="progress-bar-fill" style={{ width: `${(currentCapital / CAPITALS_GAME.length) * 100}%` }}></div>
+           </div>
            <h2>Capitale de : {CAPITALS_GAME[currentCapital].country}</h2>
            <div className="capitals-options">
-             {CAPITALS_GAME.slice(0, 4).map(c => <button key={c.capital} onClick={() => handleCapitalAnswer(c.capital)} className="capital-option">{c.capital}</button>)}
+             {/* Génère 4 options dont la bonne réponse */}
+             {[...CAPITALS_GAME].sort(() => 0.5 - Math.random()).slice(0, 3).concat(CAPITALS_GAME[currentCapital])
+               .sort(() => 0.5 - Math.random())
+               .map(c => <button key={c.capital} onClick={() => handleCapitalAnswer(c.capital)} className="capital-option">{c.capital}</button>)
+             }
            </div>
          </div>
        )}
