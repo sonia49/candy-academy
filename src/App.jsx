@@ -7,22 +7,142 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjYndlaGl3am93Z3RoYXpyeWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkzNTg4NjIsImV4cCI6MjA4NDkzNDg2Mn0.2nP42Uh262Jt-1stolzSVM8_EEzrAdCutKgd7B2MurY'
 );
 
-// Tes données (Inchangées)
+// QUESTIONS AMÉLIORÉES - PLUS CLAIRES ET COMPLÈTES
 const QUESTIONS = {
-  math: { '6ème': [{ q: "15 × 12 ?", r: "180" }, { q: "456 + 789 ?", r: "1245" }, { q: "144 ÷ 12 ?", r: "12" }, { q: "25 × 4 ?", r: "100" }, { q: "Moitié de 50 ?", r: "25" }, { q: "1/4 de 100 ?", r: "25" }, { q: "2.5 + 3.5 ?", r: "6" }, { q: "Côtés hexagone ?", r: "6" }, { q: "Périmètre carré côté 5 ?", r: "20" }, { q: "Angles droits carré ?", r: "4" }, { q: "1000 - 1 ?", r: "999" }, { q: "Double de 15 ?", r: "30" }, { q: "0.5 × 10 ?", r: "5" }, { q: "Côtés triangle ?", r: "3" }, { q: "100 ÷ 4 ?", r: "25" }, { q: "9 × 8 ?", r: "72" }, { q: "7 × 7 ?", r: "49" }, { q: "Rayon si diamètre 10 ?", r: "5" }, { q: "3 × 3 × 3 ?", r: "27" }, { q: "150 + 150 ?", r: "300" }], '5ème': [] },
-  french: { '6ème': [{ q: "Nature de 'vite' ?", r: "adverbe" }, { q: "COD : 'Il lit un livre'", r: "un livre" }, { q: "Sujet : 'La pluie tombe'", r: "la pluie" }, { q: "Faire (nous, présent) ?", r: "faisons" }, { q: "Avoir (je, imparfait) ?", r: "avais" }, { q: "Futur 'aller' (tu) ?", r: "iras" }, { q: "Pluriel 'journal' ?", r: "journaux" }, { q: "Féminin 'boulanger' ?", r: "boulangère" }, { q: "Synonyme 'triste' ?", r: "malheureux" }, { q: "Contraire 'chaud' ?", r: "froid" }, { q: "Infinitif 'dormons' ?", r: "dormir" }, { q: "Type : 'Sortez !'", r: "imperative" }, { q: "Féminin 'lion' ?", r: "lionne" }, { q: "Syllabes 'bateau' ?", r: "2" }, { q: "Pluriel 'gaz' ?", r: "gaz" }, { q: "Contraire 'petit' ?", r: "grand" }, { q: "Sujet 'Tu chantes' ?", r: "tu" }, { q: "Nature 'belle' ?", r: "adjectif" }, { q: "Verbe 'Il finit' ?", r: "finit" }, { q: "Synonyme 'joyeux' ?", r: "heureux" }], '5ème': [] },
-  english: { '6ème': [{ q: "Dog ?", r: "chien" }, { q: "Cat ?", r: "chat" }, { q: "House ?", r: "maison" }, { q: "School ?", r: "école" }, { q: "15 ?", r: "fifteen" }, { q: "Red ?", r: "rouge" }, { q: "Blue ?", r: "bleu" }, { q: "I (to be) happy ?", r: "am" }, { q: "He (to have) a dog ?", r: "has" }, { q: "Family ?", r: "famille" }, { q: "Apple ?", r: "pomme" }, { q: "Book ?", r: "livre" }, { q: "Hello ?", r: "bonjour" }, { q: "Thank you ?", r: "merci" }, { q: "Yellow ?", r: "jaune" }, { q: "Green ?", r: "vert" }, { q: "Brother ?", r: "frère" }, { q: "Sister ?", r: "soeur" }, { q: "Sun ?", r: "soleil" }, { q: "Water ?", r: "eau" }], '5ème': [] }
+  math: {
+    '6ème': [
+      { q: "Combien font 15 × 12 ?", r: "180" },
+      { q: "Calcule : 456 + 789 = ?", r: "1245" },
+      { q: "Combien font 144 ÷ 12 ?", r: "12" },
+      { q: "Calcule : 25 × 4 = ?", r: "100" },
+      { q: "Quelle est la moitié de 50 ?", r: "25" },
+      { q: "Combien font 1/4 de 100 ?", r: "25" },
+      { q: "Calcule : 2,5 + 3,5 = ?", r: "6" },
+      { q: "Combien de côtés a un hexagone ?", r: "6" },
+      { q: "Périmètre d'un carré de côté 5 cm ?", r: "20" },
+      { q: "Combien d'angles droits dans un carré ?", r: "4" },
+      { q: "Calcule : 1000 - 1 = ?", r: "999" },
+      { q: "Quel est le double de 15 ?", r: "30" },
+      { q: "Combien font 0,5 × 10 ?", r: "5" },
+      { q: "Combien de côtés a un triangle ?", r: "3" },
+      { q: "Calcule : 100 ÷ 4 = ?", r: "25" },
+      { q: "Table de 9 : 9 × 8 = ?", r: "72" },
+      { q: "Combien font 7 × 7 ?", r: "49" },
+      { q: "Si le diamètre = 10 cm, rayon = ?", r: "5" },
+      { q: "Calcule : 3 × 3 × 3 = ?", r: "27" },
+      { q: "Combien font 150 + 150 ?", r: "300" }
+    ],
+    '5ème': [
+      { q: "Calcule : -5 + 8 = ?", r: "3" },
+      { q: "Combien font -12 + 7 ?", r: "-5" },
+      { q: "Calcule : 10 - 15 = ?", r: "-5" },
+      { q: "Combien font -3 × 4 ?", r: "-12" },
+      { q: "Simplifie la fraction : 4/8", r: "1/2" },
+      { q: "Aire d'un rectangle 5 cm × 8 cm ?", r: "40" },
+      { q: "Combien font 10% de 200 ?", r: "20" },
+      { q: "Calcule : 2 + 3 × 4 = ? (ordre !)", r: "14" },
+      { q: "Calcule : (5 + 3) × 2 = ?", r: "16" },
+      { q: "Aire d'un carré de côté 6 cm ?", r: "36" }
+    ]
+  },
+  french: {
+    '6ème': [
+      { q: "Quelle est la nature de 'rapidement' ?", r: "adverbe" },
+      { q: "COD dans : 'Je mange une pomme'", r: "une pomme" },
+      { q: "Sujet dans : 'Le chat dort'", r: "le chat" },
+      { q: "Conjugue 'faire' au présent (nous)", r: "faisons" },
+      { q: "Conjugue 'avoir' à l'imparfait (je)", r: "avais" },
+      { q: "Conjugue 'aller' au futur (tu)", r: "iras" },
+      { q: "Quel est le pluriel de 'cheval' ?", r: "chevaux" },
+      { q: "Féminin de 'acteur' ?", r: "actrice" },
+      { q: "Synonyme de 'joyeux' ?", r: "heureux" },
+      { q: "Contraire de 'grand' ?", r: "petit" },
+      { q: "Infinitif du verbe 'nous dormons'", r: "dormir" },
+      { q: "Type de phrase : 'Sortez !' ?", r: "imperative" },
+      { q: "Féminin de 'lion' ?", r: "lionne" },
+      { q: "Combien de syllabes : 'bateau' ?", r: "2" },
+      { q: "Pluriel de 'gaz' ?", r: "gaz" },
+      { q: "Contraire de 'petit' ?", r: "grand" },
+      { q: "Sujet dans 'Tu chantes' ?", r: "tu" },
+      { q: "Nature de 'belle' ?", r: "adjectif" },
+      { q: "Verbe dans 'Il finit' ?", r: "finit" },
+      { q: "Synonyme de 'triste' ?", r: "malheureux" }
+    ],
+    '5ème': [
+      { q: "Conditionnel présent de 'pouvoir' (je)", r: "pourrais" },
+      { q: "Subjonctif présent de 'être' (il)", r: "soit" },
+      { q: "Passé simple de 'faire' (il)", r: "fit" },
+      { q: "Figure de style : 'Fort comme un lion'", r: "comparaison" },
+      { q: "Figure de style : 'La mer est un miroir'", r: "metaphore" },
+      { q: "Figure de style : 'Je meurs de faim'", r: "hyperbole" },
+      { q: "Type de verbe : 'sembler'", r: "etat" },
+      { q: "Pluriel de 'bijou' ?", r: "bijoux" },
+      { q: "Féminin de 'directeur' ?", r: "directrice" },
+      { q: "Conjugue 'venir' au présent (nous)", r: "venons" }
+    ]
+  },
+  english: {
+    '6ème': [
+      { q: "Traduis 'chien' en anglais", r: "dog" },
+      { q: "Traduis 'chat' en anglais", r: "cat" },
+      { q: "Traduis 'maison' en anglais", r: "house" },
+      { q: "Traduis 'école' en anglais", r: "school" },
+      { q: "Comment dit-on '15' ?", r: "fifteen" },
+      { q: "Traduis 'rouge' en anglais", r: "red" },
+      { q: "Traduis 'bleu' en anglais", r: "blue" },
+      { q: "I (to be) happy → I ... happy", r: "am" },
+      { q: "He (to have) a dog → He ... a dog", r: "has" },
+      { q: "Traduis 'famille' en anglais", r: "family" },
+      { q: "Traduis 'pomme' en anglais", r: "apple" },
+      { q: "Traduis 'livre' en anglais", r: "book" },
+      { q: "Comment dit-on 'bonjour' ?", r: "hello" },
+      { q: "Comment dit-on 'merci' ?", r: "thank you" },
+      { q: "Traduis 'jaune' en anglais", r: "yellow" },
+      { q: "Traduis 'vert' en anglais", r: "green" },
+      { q: "Traduis 'frère' en anglais", r: "brother" },
+      { q: "Traduis 'sœur' en anglais", r: "sister" },
+      { q: "Traduis 'soleil' en anglais", r: "sun" },
+      { q: "Traduis 'eau' en anglais", r: "water" }
+    ],
+    '5ème': [
+      { q: "Passé simple de 'go' ?", r: "went" },
+      { q: "Passé simple de 'eat' ?", r: "ate" },
+      { q: "Passé simple de 'see' ?", r: "saw" },
+      { q: "Passé simple de 'make' ?", r: "made" },
+      { q: "Present continuous: I (read) a book", r: "am reading" },
+      { q: "Present continuous: She (play) tennis", r: "is playing" },
+      { q: "Comparatif de 'big' ?", r: "bigger" },
+      { q: "Comparatif de 'good' ?", r: "better" },
+      { q: "Superlatif de 'happy' ?", r: "happiest" },
+      { q: "Passé simple de 'take' ?", r: "took" }
+    ]
+  }
 };
 
 const CAPITALS_GAME = [
-  { country: "France", capital: "Paris" }, { country: "Espagne", capital: "Madrid" },
-  { country: "Italie", capital: "Rome" }, { country: "Allemagne", capital: "Berlin" },
-  { country: "Royaume-Uni", capital: "Londres" }, { country: "Portugal", capital: "Lisbonne" },
-  { country: "Belgique", capital: "Bruxelles" }, { country: "Pays-Bas", capital: "Amsterdam" },
-  { country: "Suisse", capital: "Berne" }, { country: "Autriche", capital: "Vienne" }
+  { country: "France", capital: "Paris" },
+  { country: "Espagne", capital: "Madrid" },
+  { country: "Italie", capital: "Rome" },
+  { country: "Allemagne", capital: "Berlin" },
+  { country: "Royaume-Uni", capital: "Londres" },
+  { country: "Portugal", capital: "Lisbonne" },
+  { country: "Belgique", capital: "Bruxelles" },
+  { country: "Pays-Bas", capital: "Amsterdam" },
+  { country: "Suisse", capital: "Berne" },
+  { country: "Autriche", capital: "Vienne" }
 ];
 
 const AVATARS = ['🧁', '🍰', '🍭', '🍬', '🍩', '🍪', '🧋', '🍦', '🌈', '⭐', '💎', '🦄'];
+
+// CITATIONS MOTIVANTES
+const QUOTES = [
+  "Chaque question est une victoire ! 🏆",
+  "Tu progresses à chaque réponse ! 📈",
+  "Continue, tu es incroyable ! 💪",
+  "L'apprentissage est une aventure ! 🚀",
+  "Chaque effort compte ! ⭐",
+  "Tu es un champion ! 🎯"
+];
 
 function App() {
   const [screen, setScreen] = useState('auth');
@@ -36,17 +156,51 @@ function App() {
   const [answer, setAnswer] = useState('');
   const [showResult, setShowResult] = useState(null);
   const [currentCapital, setCurrentCapital] = useState(0);
+  const [capitalScore, setCapitalScore] = useState(0);
   const [selectedAvatar, setSelectedAvatar] = useState('🧁');
   const [showSettings, setShowSettings] = useState(false);
   
-  // Widget Temps
+  // WIDGETS INNOVANTS
   const [sessionSeconds, setSessionSeconds] = useState(0);
+  const [questionsToday, setQuestionsToday] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
+  const [stats, setStats] = useState({ correct: 0, total: 0 });
+  const [brainPower, setBrainPower] = useState(0); // Jauge de concentration
+  const [motivation, setMotivation] = useState(100); // Jauge de motivation
+  const [currentQuote, setCurrentQuote] = useState(QUOTES[0]);
 
   useEffect(() => {
+    // Timer session
     const timer = setInterval(() => setSessionSeconds(s => s + 1), 1000);
+    
+    // Brain power diminue avec le temps (fatigue)
+    const brainTimer = setInterval(() => {
+      setBrainPower(b => Math.max(0, b - 1));
+    }, 10000); // Perd 1 point tous les 10s
+    
+    // Avatar et données
     const saved = localStorage.getItem('selectedAvatar');
     if (saved) setSelectedAvatar(saved);
-    return () => clearInterval(timer);
+    
+    const savedQuestions = localStorage.getItem('questionsToday');
+    if (savedQuestions) setQuestionsToday(parseInt(savedQuestions));
+    
+    const savedBest = localStorage.getItem('bestStreak');
+    if (savedBest) setBestStreak(parseInt(savedBest));
+    
+    return () => {
+      clearInterval(timer);
+      clearInterval(brainTimer);
+    };
+  }, []);
+
+  // Change quote toutes les 30 secondes
+  useEffect(() => {
+    const quoteInterval = setInterval(() => {
+      setCurrentQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
+    }, 30000);
+    return () => clearInterval(quoteInterval);
   }, []);
 
   const formatTime = (sec) => {
@@ -58,62 +212,192 @@ function App() {
   const handleAuth = async (type) => {
     if (!username || password.length < 6) return alert("⚠️ Pseudo et mot de passe (6+) !");
     const email = username.toLowerCase().trim() + "@candy.app";
+    
     if (type === 'signup') {
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) return alert(error.message);
-      await supabase.from('profiles').insert([{ id: data.user.id, email: username, diamonds: 100, level: 1, streak: 0 }]);
+      await supabase.from('profiles').insert([{ 
+        id: data.user.id, 
+        email: username, 
+        diamonds: 100, 
+        level: 1, 
+        streak: 0 
+      }]);
       alert("✨ Compte créé !");
     } else {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) return alert("Erreur connexion");
       let { data: prof } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
-      setProfile(prof || { email: username, diamonds: 100, streak: 0 });
+      if (!prof) {
+        const { data: newProf } = await supabase.from('profiles')
+          .insert([{ id: data.user.id, email: username, diamonds: 100, level: 1, streak: 0 }])
+          .select()
+          .single();
+        prof = newProf;
+      }
+      setProfile(prof);
       setScreen('dashboard');
     }
   };
 
   const handleCheckAnswer = async () => {
     const questions = QUESTIONS[category][level];
-    if (answer.toLowerCase().trim() === questions[currentQ].r.toLowerCase().trim()) {
+    const correct = questions[currentQ].r.toLowerCase().trim();
+    const userAnswer = answer.toLowerCase().trim();
+    
+    const newStats = { ...stats, total: stats.total + 1 };
+
+    if (userAnswer === correct || correct.includes(userAnswer)) {
+      // BONNE RÉPONSE !
+      newStats.correct++;
       setShowResult('correct');
-      if (window.confetti) window.confetti({ particleCount: 100 });
-      setProfile(p => ({ ...p, diamonds: p.diamonds + 15 }));
+      
+      // Streak
+      const newStreak = currentStreak + 1;
+      setCurrentStreak(newStreak);
+      if (newStreak > bestStreak) {
+        setBestStreak(newStreak);
+        localStorage.setItem('bestStreak', newStreak.toString());
+      }
+      
+      // Brain Power boost !
+      setBrainPower(Math.min(100, brainPower + 10));
+      
+      // Motivation boost !
+      setMotivation(Math.min(100, motivation + 5));
+      
+      // Questions today
+      const newCount = questionsToday + 1;
+      setQuestionsToday(newCount);
+      localStorage.setItem('questionsToday', newCount.toString());
+      
+      if (window.confetti) {
+        window.confetti({ particleCount: 100, spread: 70 });
+      }
+      
+      // Mise à jour profil
+      const updatedProfile = {
+        ...profile,
+        diamonds: profile.diamonds + 15,
+        streak: profile.streak + 1
+      };
+      
+      await supabase.from('profiles').update({
+        diamonds: updatedProfile.diamonds,
+        streak: updatedProfile.streak
+      }).eq('id', profile.id);
+      
+      setProfile(updatedProfile);
+      
       setTimeout(() => {
         setShowResult(null);
         setCurrentQ((currentQ + 1) % questions.length);
         setAnswer('');
-      }, 1500);
+      }, 2000);
     } else {
+      // MAUVAISE RÉPONSE
       setShowResult('wrong');
-      setTimeout(() => setShowResult(null), 1500);
+      setCurrentStreak(0); // Reset streak
+      setMotivation(Math.max(0, motivation - 10)); // Perte motivation
+      
+      setTimeout(() => {
+        setShowResult(null);
+      }, 2000);
+    }
+    
+    setStats(newStats);
+  };
+
+  // FIX CAPITALES : Générer les options UNE SEULE FOIS
+  const [capitalOptions, setCapitalOptions] = useState([]);
+  
+  useEffect(() => {
+    if (gameMode === 'capitals') {
+      generateCapitalOptions();
+    }
+  }, [currentCapital, gameMode]);
+  
+  const generateCapitalOptions = () => {
+    const current = CAPITALS_GAME[currentCapital];
+    const allCapitals = CAPITALS_GAME.map(c => c.capital);
+    const wrongOptions = allCapitals
+      .filter(c => c !== current.capital)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+    
+    const options = [current.capital, ...wrongOptions]
+      .sort(() => Math.random() - 0.5);
+    
+    setCapitalOptions(options);
+  };
+
+  const handleCapitalAnswer = (selectedCity) => {
+    const correct = CAPITALS_GAME[currentCapital].capital;
+    
+    if (selectedCity === correct) {
+      // BONNE RÉPONSE
+      setCapitalScore(capitalScore + 1);
+      setBrainPower(Math.min(100, brainPower + 10));
+      setMotivation(Math.min(100, motivation + 5));
+      
+      if (window.confetti) {
+        window.confetti({ particleCount: 50, spread: 60 });
+      }
+      
+      if (currentCapital < CAPITALS_GAME.length - 1) {
+        setTimeout(() => {
+          setCurrentCapital(currentCapital + 1);
+        }, 800);
+      } else {
+        setTimeout(() => {
+          alert(`🏆 BRAVO ! Score : ${capitalScore + 1}/${CAPITALS_GAME.length}`);
+          setGameMode('menu');
+          setCurrentCapital(0);
+          setCapitalScore(0);
+        }, 1000);
+      }
+    } else {
+      // MAUVAISE RÉPONSE
+      setShowResult('wrong');
+      setMotivation(Math.max(0, motivation - 10));
+      setTimeout(() => {
+        setShowResult(null);
+      }, 1000);
     }
   };
 
-  // FIX CAPITALES : On génère les boutons dynamiquement pour éviter les bugs de ville
-  const handleCapitalAnswer = (city) => {
-    if (city === CAPITALS_GAME[currentCapital].capital) {
-      if (window.confetti) window.confetti({ particleCount: 50 });
-      if (currentCapital < CAPITALS_GAME.length - 1) {
-        setCurrentCapital(currentCapital + 1);
-      } else {
-        alert("🏆 Bravo ! Tu connais tout !");
-        setGameMode('menu');
-        setCurrentCapital(0);
-      }
-    } else {
-      setShowResult('wrong');
-      setTimeout(() => setShowResult(null), 1000);
-    }
+  const startCapitalsGame = () => {
+    setGameMode('capitals');
+    setCurrentCapital(0);
+    setCapitalScore(0);
   };
+
+  // CALCUL WIDGETS
+  const successRate = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+  const dailyGoal = 20;
+  const goalProgress = Math.min(100, (questionsToday / dailyGoal) * 100);
 
   if (screen === 'auth') {
     return (
       <div className="app">
         <div className="auth-container">
           <h1 className="logo">🍭 Candy Academy</h1>
-          <input className="input-candy" placeholder="Pseudo" value={username} onChange={e => setUsername(e.target.value)} />
-          <input className="input-candy" type="password" placeholder="Pass" value={password} onChange={e => setPassword(e.target.value)} />
-          <button onClick={() => handleAuth('login')} className="btn-primary">ENTRER</button>
+          <p className="tagline">Apprends en t'amusant !</p>
+          <input 
+            className="input-candy" 
+            placeholder="✨ Ton pseudo" 
+            value={username} 
+            onChange={e => setUsername(e.target.value)} 
+          />
+          <input 
+            className="input-candy" 
+            type="password" 
+            placeholder="🔐 Mot de passe (6+)" 
+            value={password} 
+            onChange={e => setPassword(e.target.value)}
+            onKeyPress={e => e.key === 'Enter' && handleAuth('login')}
+          />
+          <button onClick={() => handleAuth('login')} className="btn-primary">SE CONNECTER</button>
           <button onClick={() => handleAuth('signup')} className="btn-secondary">S'INSCRIRE</button>
         </div>
       </div>
@@ -124,28 +408,163 @@ function App() {
     return (
       <div className="app">
         <div className="settings-icon" onClick={() => setShowSettings(true)}>⚙️</div>
+        
         <div className="dashboard">
+          {/* HEADER */}
           <div className="header">
             <div className="avatar-big">{selectedAvatar}</div>
             <div className="user-info">
-              <h2>{profile?.email}</h2>
-              <div className="widgets-top">
-                <div className="candy-widget">💎 {profile?.diamonds}</div>
-                <div className="candy-widget time-widget">⏱️ {formatTime(sessionSeconds)}</div>
+              <h2>{profile?.email?.toUpperCase()}</h2>
+              <div className="badges">
+                <span className="badge">💎 {profile?.diamonds}</span>
+                <span className="badge">⭐ Niv.{profile?.level}</span>
+                <span className="badge">🔥 {profile?.streak}</span>
               </div>
             </div>
           </div>
+
+          {/* WIDGETS INNOVANTS */}
+          <div className="widgets-container">
+            {/* Widget Citation Motivante */}
+            <div className="widget quote-widget">
+              <div className="widget-icon">💭</div>
+              <div className="widget-text">{currentQuote}</div>
+            </div>
+
+            {/* Widget Objectif Quotidien */}
+            <div className="widget goal-widget">
+              <div className="widget-header">
+                <span>🎯 Objectif du jour</span>
+                <span className="widget-value">{questionsToday}/{dailyGoal}</span>
+              </div>
+              <div className="progress-bar-widget">
+                <div className="progress-fill-widget" style={{width: `${goalProgress}%`}}></div>
+              </div>
+            </div>
+
+            {/* Mini Widgets Grid */}
+            <div className="mini-widgets-grid">
+              {/* Temps de Session */}
+              <div className="mini-widget">
+                <div className="mini-icon">⏱️</div>
+                <div className="mini-value">{formatTime(sessionSeconds)}</div>
+                <div className="mini-label">Session</div>
+              </div>
+
+              {/* Taux de Réussite */}
+              <div className="mini-widget">
+                <div className="mini-icon">🎯</div>
+                <div className="mini-value">{successRate}%</div>
+                <div className="mini-label">Réussite</div>
+              </div>
+
+              {/* Série Actuelle */}
+              <div className="mini-widget streak-widget">
+                <div className="mini-icon">🔥</div>
+                <div className="mini-value">{currentStreak}</div>
+                <div className="mini-label">Série</div>
+              </div>
+
+              {/* Meilleure Série */}
+              <div className="mini-widget">
+                <div className="mini-icon">🏆</div>
+                <div className="mini-value">{bestStreak}</div>
+                <div className="mini-label">Record</div>
+              </div>
+            </div>
+
+            {/* Jauges Innovantes */}
+            <div className="gauges-container">
+              {/* Jauge Brain Power */}
+              <div className="gauge">
+                <div className="gauge-header">
+                  <span>🧠 Concentration</span>
+                  <span className="gauge-value">{brainPower}%</span>
+                </div>
+                <div className="gauge-bar">
+                  <div 
+                    className="gauge-fill brain-fill" 
+                    style={{width: `${brainPower}%`}}
+                  ></div>
+                </div>
+                <div className="gauge-tip">💡 Diminue avec le temps, boost avec bonnes réponses !</div>
+              </div>
+
+              {/* Jauge Motivation */}
+              <div className="gauge">
+                <div className="gauge-header">
+                  <span>💪 Motivation</span>
+                  <span className="gauge-value">{motivation}%</span>
+                </div>
+                <div className="gauge-bar">
+                  <div 
+                    className="gauge-fill motivation-fill" 
+                    style={{width: `${motivation}%`}}
+                  ></div>
+                </div>
+                <div className="gauge-tip">🎊 +5 par bonne réponse, -10 par erreur</div>
+              </div>
+            </div>
+          </div>
+
+          <h3 className="section-title">🎮 Choisis ton jeu</h3>
+          
+          {/* BOUTONS DE JEU */}
           <div className="game-buttons">
-            <button className="game-btn math-btn" onClick={() => {setGameMode('quiz'); setCategory('math'); setCurrentQ(0);}}>🍩 MATHS</button>
-            <button className="game-btn french-btn" onClick={() => {setGameMode('quiz'); setCategory('french'); setCurrentQ(0);}}>🍬 FRANÇAIS</button>
-            <button className="game-btn english-btn" onClick={() => {setGameMode('quiz'); setCategory('english'); setCurrentQ(0);}}>🍦 ENGLISH</button>
-            <button className="game-btn world-btn" onClick={() => {setGameMode('capitals'); setCurrentCapital(0);}}>🌍 CAPITALES</button>
+            <button 
+              className="game-btn math-btn" 
+              onClick={() => {setGameMode('quiz'); setCategory('math'); setCurrentQ(0);}}
+            >
+              <span className="btn-icon">🍩</span>
+              <span className="btn-text">MATHS</span>
+            </button>
+            
+            <button 
+              className="game-btn french-btn" 
+              onClick={() => {setGameMode('quiz'); setCategory('french'); setCurrentQ(0);}}
+            >
+              <span className="btn-icon">🍬</span>
+              <span className="btn-text">FRANÇAIS</span>
+            </button>
+            
+            <button 
+              className="game-btn english-btn" 
+              onClick={() => {setGameMode('quiz'); setCategory('english'); setCurrentQ(0);}}
+            >
+              <span className="btn-icon">🍦</span>
+              <span className="btn-text">ENGLISH</span>
+            </button>
+            
+            <button 
+              className="game-btn world-btn" 
+              onClick={startCapitalsGame}
+            >
+              <span className="btn-icon">🌍</span>
+              <span className="btn-text">CAPITALES</span>
+            </button>
           </div>
         </div>
+
+        {/* MODAL SETTINGS */}
         {showSettings && (
           <div className="modal" onClick={() => setShowSettings(false)}>
-            <div className="modal-content">
-              {AVATARS.map(av => <span key={av} onClick={() => setSelectedAvatar(av)} style={{cursor:'pointer', fontSize:'2rem'}}>{av}</span>)}
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <h3>⚙️ Choisis ton avatar</h3>
+              <div className="avatar-grid">
+                {AVATARS.map(av => (
+                  <div
+                    key={av}
+                    className={`avatar-option ${selectedAvatar === av ? 'selected' : ''}`}
+                    onClick={() => {
+                      setSelectedAvatar(av);
+                      localStorage.setItem('selectedAvatar', av);
+                    }}
+                  >
+                    {av}
+                  </div>
+                ))}
+              </div>
+              <button className="btn-primary" onClick={() => setShowSettings(false)}>OK</button>
             </div>
           </div>
         )}
@@ -153,48 +572,141 @@ function App() {
     );
   }
 
-  const progress = gameMode === 'quiz' 
-    ? (currentQ / QUESTIONS[category][level].length) * 100 
-    : (currentCapital / CAPITALS_GAME.length) * 100;
+  // MODE QUIZ
+  if (gameMode === 'quiz') {
+    const questions = QUESTIONS[category][level];
+    const currentQuestion = questions[currentQ];
+    const progress = ((currentQ + 1) / questions.length) * 100;
 
-  return (
-    <div className="app">
-      <div className="quiz-container">
-        <div className="quiz-header">
-           <button onClick={() => setGameMode('menu')}>←</button>
-           <div className="candy-progress-container">
-              <div className="candy-progress-bar" style={{ width: `${progress}%` }}></div>
-           </div>
-        </div>
-
-        {gameMode === 'quiz' ? (
-          <>
-            <h2 className="question-text">{QUESTIONS[category][level][currentQ]?.q}</h2>
-            <input className="answer-input" value={answer} onChange={e => setAnswer(e.target.value)} onKeyPress={e=> e.key === 'Enter' && handleCheckAnswer()} />
-            <button className="btn-primary" onClick={handleCheckAnswer}>VALIDER ✨</button>
-          </>
-        ) : (
-          <>
-            <h2 className="question-text">Capitale de : {CAPITALS_GAME[currentCapital].country}</h2>
-            <div className="capitals-grid">
-              {/* On mélange les options pour que ce soit un vrai jeu */}
-              {[CAPITALS_GAME[currentCapital].capital, "Madrid", "Berlin", "Londres", "Paris", "Rome", "Lisbonne"]
-                .filter((v, i, a) => a.indexOf(v) === i) // Uniques
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 4)
-                .map(city => (
-                  <button key={city} onClick={() => handleCapitalAnswer(city)} className="capital-option">
-                    {city}
-                  </button>
-                ))
-              }
+    return (
+      <div className="app">
+        <div className="quiz-container">
+          <div className="quiz-header">
+            <button className="back-btn" onClick={() => setGameMode('menu')}>← Retour</button>
+            <div className="quiz-info">
+              <span className="category-badge">{category.toUpperCase()}</span>
+              <span className="level-badge">{level}</span>
             </div>
-          </>
-        )}
-        {showResult && <div className={`result-overlay ${showResult}`}><h2>{showResult === 'correct' ? 'Miam !' : 'Oups !'}</h2></div>}
+          </div>
+
+          <div className="level-selector">
+            <button 
+              className={`level-btn ${level === '6ème' ? 'active' : ''}`}
+              onClick={() => { setLevel('6ème'); setCurrentQ(0); }}
+            >
+              6ème
+            </button>
+            <button 
+              className={`level-btn ${level === '5ème' ? 'active' : ''}`}
+              onClick={() => { setLevel('5ème'); setCurrentQ(0); }}
+            >
+              5ème
+            </button>
+          </div>
+
+          <div className="candy-progress-container">
+            <div className="candy-progress-bar" style={{ width: `${progress}%` }}></div>
+          </div>
+          <p className="progress-text">Question {currentQ + 1}/{questions.length}</p>
+
+          <div className="question-box">
+            <h2 className="question-text">{currentQuestion?.q}</h2>
+            
+            <input 
+              className="answer-input" 
+              value={answer} 
+              onChange={e => setAnswer(e.target.value)} 
+              onKeyPress={e => e.key === 'Enter' && handleCheckAnswer()}
+              placeholder="Ta réponse..."
+              autoFocus
+            />
+            
+            <button className="btn-primary" onClick={handleCheckAnswer}>
+              VALIDER ✨
+            </button>
+          </div>
+
+          {showResult && (
+            <div className={`result-overlay ${showResult}`}>
+              <div className="result-card">
+                {showResult === 'correct' ? (
+                  <>
+                    <div className="result-emoji">🎉</div>
+                    <h2>BRAVO !</h2>
+                    <p>C'est la bonne réponse !</p>
+                    <p className="reward">+15 💎</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="result-emoji">😅</div>
+                    <h2>PAS TOUT À FAIT...</h2>
+                    <p>La bonne réponse était :</p>
+                    <p className="correct-answer">{currentQuestion?.r}</p>
+                    <p className="encouragement">Réessaie la prochaine !</p>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  // MODE CAPITALES (CORRIGÉ)
+  if (gameMode === 'capitals') {
+    const current = CAPITALS_GAME[currentCapital];
+    const progress = ((currentCapital + 1) / CAPITALS_GAME.length) * 100;
+
+    return (
+      <div className="app">
+        <div className="quiz-container">
+          <div className="quiz-header">
+            <button className="back-btn" onClick={() => setGameMode('menu')}>← Retour</button>
+            <div className="quiz-info">
+              <span className="category-badge">CAPITALES</span>
+              <span className="score-badge">Score: {capitalScore}/{currentCapital}</span>
+            </div>
+          </div>
+
+          <div className="candy-progress-container">
+            <div className="candy-progress-bar" style={{ width: `${progress}%` }}></div>
+          </div>
+          <p className="progress-text">Pays {currentCapital + 1}/{CAPITALS_GAME.length}</p>
+
+          <div className="capitals-game">
+            <div className="world-map">🗺️</div>
+            <h2 className="capitals-question">Quelle est la capitale de :</h2>
+            <h1 className="country-name">{current.country}</h1>
+
+            <div className="capitals-grid">
+              {capitalOptions.map((city, index) => (
+                <button
+                  key={`${city}-${index}`}
+                  className="capital-option"
+                  onClick={() => handleCapitalAnswer(city)}
+                >
+                  {city}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {showResult === 'wrong' && (
+            <div className="result-overlay wrong">
+              <div className="result-card">
+                <div className="result-emoji">😅</div>
+                <h2>Oups !</h2>
+                <p>Réessaie !</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }
 
 export default App;
