@@ -144,6 +144,64 @@ const QUOTES = [
   "Tu es un champion ! 🎯"
 ];
 
+// FAITS SCIENTIFIQUES SUR LE TEMPS D'ÉCRAN
+const SCREEN_TIME_FACTS = {
+  // Moins de 30 minutes - OK
+  low: [
+    "👍 Super ! Moins de 30 min d'écran, c'est parfait pour ton cerveau !",
+    "🧠 Le savais-tu ? Ton cerveau apprend mieux avec des pauses régulières !",
+    "✨ Bravo ! Tu protèges tes yeux en limitant ton temps d'écran !"
+  ],
+  // 30 min - 1h - Bien
+  moderate: [
+    "⏰ 30-60 min d'écran : C'est raisonnable ! Pense à faire une pause bientôt.",
+    "👀 Info santé : Toutes les 20 min, regarde au loin pendant 20 secondes !",
+    "🧠 Le savais-tu ? Après 45 min d'écran, ton cerveau a besoin de repos !"
+  ],
+  // 1h - 2h - Attention
+  high: [
+    "⚠️ 1-2h d'écran : C'est beaucoup ! L'OMS recommande max 2h/jour pour les enfants.",
+    "👁️ Fait scientifique : Les écrans fatiguent tes yeux 3x plus vite que la lecture !",
+    "🧠 Info cerveau : Après 1h d'écran, ta concentration baisse de 30% !",
+    "💡 Le savais-tu ? Les écrans avant de dormir perturbent ton sommeil pendant 2h !"
+  ],
+  // Plus de 2h - ALERTE
+  critical: [
+    "🚨 ALERTE : +2h d'écran ! L'OMS dit que c'est trop pour ton âge !",
+    "⚠️ Danger santé : +2h d'écran par jour augmente les risques de myopie de 80% !",
+    "🧠 Fait scientifique : +2h d'écran réduit la matière grise dans ton cerveau !",
+    "💤 Info sommeil : +2h d'écran retarde l'endormissement de 1h en moyenne !",
+    "👀 Alerte yeux : +2h d'écran peut causer une fatigue oculaire permanente !",
+    "🏃 Conseil santé : Avec +2h d'écran, tu as besoin de 1h d'activité physique !",
+    "🧠 Le savais-tu ? Les enfants qui passent +3h sur écran ont 2x plus de troubles de l'attention !"
+  ],
+  // Plus de 3h - DANGER
+  extreme: [
+    "🔴 DANGER ! +3h d'écran ! C'est vraiment trop pour ta santé !",
+    "🚨 URGENT : Éteins l'écran ! +3h cause des dommages sur ton développement cérébral !",
+    "⚠️ Fait alarmant : +3h d'écran par jour = risque de dépression multiplié par 2 !",
+    "👀 ALERTE SÉVÈRE : +3h d'écran = risque de myopie avant 18 ans de 90% !",
+    "🧠 Info critique : +3h d'écran réduit ta capacité de mémorisation de 40% !",
+    "💤 Danger sommeil : +3h d'écran = perte de 1h30 de sommeil par nuit !",
+    "🏃 URGENT : Ton corps a besoin de bouger ! Fais du sport maintenant !",
+    "📚 Alerte apprentissage : +3h d'écran = baisse de 25% des résultats scolaires !"
+  ]
+};
+
+// CONSEILS SANTÉ ÉCRAN
+const HEALTH_TIPS = [
+  "💡 Règle 20-20-20 : Toutes les 20 min, regarde à 20 pieds (6m) pendant 20 secondes !",
+  "🏃 Bouge toutes les heures ! Ton corps et ton cerveau ont besoin de mouvement !",
+  "💧 Bois de l'eau régulièrement, les écrans font oublier la soif !",
+  "☀️ Va dehors au moins 1h par jour, la lumière naturelle protège tes yeux !",
+  "😴 Arrête les écrans 1h avant de dormir pour bien dormir !",
+  "🧘 Étire-toi ! Les écrans créent des tensions dans le cou et le dos !",
+  "👀 Cligne des yeux souvent, on cligne 3x moins devant un écran !",
+  "📏 Garde 50cm de distance minimum avec l'écran !",
+  "🌙 Active le mode nuit le soir pour protéger ton sommeil !",
+  "🎮 Alternes ! 30 min d'écran = 30 min d'activité physique !"
+];
+
 function App() {
   const [screen, setScreen] = useState('auth');
   const [username, setUsername] = useState('');
@@ -169,6 +227,12 @@ function App() {
   const [brainPower, setBrainPower] = useState(0); // Jauge de concentration
   const [motivation, setMotivation] = useState(100); // Jauge de motivation
   const [currentQuote, setCurrentQuote] = useState(QUOTES[0]);
+  
+  // WIDGET SANTÉ ÉCRAN
+  const [totalScreenTime, setTotalScreenTime] = useState(0); // En secondes
+  const [screenTimeFact, setScreenTimeFact] = useState('');
+  const [healthTip, setHealthTip] = useState('');
+  const [showScreenAlert, setShowScreenAlert] = useState(false);
 
   useEffect(() => {
     // Timer session
@@ -189,11 +253,62 @@ function App() {
     const savedBest = localStorage.getItem('bestStreak');
     if (savedBest) setBestStreak(parseInt(savedBest));
     
+    // CHARGER LE TEMPS D'ÉCRAN TOTAL AUJOURD'HUI
+    const today = new Date().toDateString();
+    const savedDate = localStorage.getItem('screenTimeDate');
+    const savedScreenTime = localStorage.getItem('totalScreenTime');
+    
+    if (savedDate === today && savedScreenTime) {
+      setTotalScreenTime(parseInt(savedScreenTime));
+    } else {
+      // Nouveau jour, reset
+      localStorage.setItem('screenTimeDate', today);
+      localStorage.setItem('totalScreenTime', '0');
+      setTotalScreenTime(0);
+    }
+    
     return () => {
       clearInterval(timer);
       clearInterval(brainTimer);
     };
   }, []);
+
+  // MISE À JOUR DU TEMPS D'ÉCRAN TOTAL
+  useEffect(() => {
+    const screenTimer = setInterval(() => {
+      const newTotal = totalScreenTime + 1;
+      setTotalScreenTime(newTotal);
+      localStorage.setItem('totalScreenTime', newTotal.toString());
+    }, 1000);
+    
+    return () => clearInterval(screenTimer);
+  }, [totalScreenTime]);
+
+  // GÉNÉRATION DES FAITS SCIENTIFIQUES
+  useEffect(() => {
+    const minutes = Math.floor(totalScreenTime / 60);
+    
+    let category = 'low';
+    if (minutes >= 180) category = 'extreme'; // 3h+
+    else if (minutes >= 120) category = 'critical'; // 2h+
+    else if (minutes >= 60) category = 'high'; // 1h+
+    else if (minutes >= 30) category = 'moderate'; // 30min+
+    
+    // Changer le fait toutes les minutes
+    const factsList = SCREEN_TIME_FACTS[category];
+    const randomFact = factsList[Math.floor(Math.random() * factsList.length)];
+    setScreenTimeFact(randomFact);
+    
+    // Conseil santé aléatoire
+    const randomTip = HEALTH_TIPS[Math.floor(Math.random() * HEALTH_TIPS.length)];
+    setHealthTip(randomTip);
+    
+    // Alertes à 1h, 2h, 3h
+    if (minutes === 60 || minutes === 120 || minutes === 180) {
+      setShowScreenAlert(true);
+      setTimeout(() => setShowScreenAlert(false), 10000); // 10 secondes
+    }
+  }, [totalScreenTime]);
 
   // Change quote toutes les 30 secondes
   useEffect(() => {
@@ -425,6 +540,19 @@ function App() {
 
           {/* WIDGETS INNOVANTS */}
           <div className="widgets-container">
+            {/* Widget Santé Écran - NOUVEAU */}
+            <div className={`widget screen-health-widget ${totalScreenTime >= 7200 ? 'critical' : totalScreenTime >= 3600 ? 'warning' : ''}`}>
+              <div className="widget-header-screen">
+                <div className="screen-icon">📱</div>
+                <div className="screen-info">
+                  <div className="screen-title">Temps d'écran aujourd'hui</div>
+                  <div className="screen-time">{formatTime(totalScreenTime)}</div>
+                </div>
+              </div>
+              <div className="screen-fact">{screenTimeFact}</div>
+              <div className="health-tip">{healthTip}</div>
+            </div>
+
             {/* Widget Citation Motivante */}
             <div className="widget quote-widget">
               <div className="widget-icon">💭</div>
@@ -565,6 +693,25 @@ function App() {
                 ))}
               </div>
               <button className="btn-primary" onClick={() => setShowSettings(false)}>OK</button>
+            </div>
+          </div>
+        )}
+
+        {/* ALERTE TEMPS D'ÉCRAN */}
+        {showScreenAlert && (
+          <div className="screen-alert-overlay">
+            <div className="screen-alert-card">
+              <div className="alert-icon">⚠️</div>
+              <h2 className="alert-title">ALERTE SANTÉ !</h2>
+              <p className="alert-message">
+                Tu as déjà passé <strong>{formatTime(totalScreenTime)}</strong> sur écran aujourd'hui !
+              </p>
+              <div className="alert-fact">{screenTimeFact}</div>
+              <div className="alert-actions">
+                <button className="btn-primary" onClick={() => setShowScreenAlert(false)}>
+                  J'ai compris ! 👍
+                </button>
+              </div>
             </div>
           </div>
         )}
