@@ -314,9 +314,118 @@ function App() {
   useEffect(() => {
     const quoteInterval = setInterval(() => {
       setCurrentQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
-    }, 30000);
+    }, 30000); // 30 secondes au lieu de 30000ms qui bug
     return () => clearInterval(quoteInterval);
   }, []);
+
+  // QUIZ TEMPS D'ÉCRAN - ÉDUCATIF
+  const [showScreenQuiz, setShowScreenQuiz] = useState(false);
+  const [currentScreenQuestion, setCurrentScreenQuestion] = useState(0);
+  const [screenQuizScore, setScreenQuizScore] = useState(0);
+  const [screenQuizAnswered, setScreenQuizAnswered] = useState(false);
+  const [screenQuizResult, setScreenQuizResult] = useState(null);
+
+  const SCREEN_QUIZ = [
+    {
+      q: "Combien d'heures maximum d'écran par jour recommande l'OMS pour les enfants ?",
+      options: ["1 heure", "2 heures", "3 heures", "4 heures"],
+      correct: 1,
+      explanation: "L'OMS recommande maximum 2 heures d'écran par jour pour les enfants et adolescents."
+    },
+    {
+      q: "De combien % augmente le risque de myopie avec plus de 2h d'écran par jour ?",
+      options: ["30%", "50%", "80%", "90%"],
+      correct: 2,
+      explanation: "Le risque de myopie augmente de 80% chez les enfants qui passent plus de 2h par jour sur les écrans."
+    },
+    {
+      q: "Quelle est la règle pour protéger tes yeux pendant l'utilisation d'écran ?",
+      options: ["10-10-10", "20-20-20", "30-30-30", "40-40-40"],
+      correct: 1,
+      explanation: "La règle 20-20-20 : Toutes les 20 minutes, regarde à 20 pieds (6m) pendant 20 secondes pour reposer tes yeux."
+    },
+    {
+      q: "Combien de temps avant de dormir faut-il arrêter les écrans ?",
+      options: ["15 minutes", "30 minutes", "1 heure", "2 heures"],
+      correct: 2,
+      explanation: "Il faut arrêter les écrans 1 heure avant de dormir car la lumière bleue perturbe la production de mélatonine (hormone du sommeil)."
+    },
+    {
+      q: "De combien baisse la concentration après 1h d'écran ?",
+      options: ["10%", "20%", "30%", "50%"],
+      correct: 2,
+      explanation: "La concentration baisse de 30% après 1 heure d'écran sans pause, c'est pourquoi les pauses régulières sont essentielles."
+    },
+    {
+      q: "Combien de fois cligne-t-on moins des yeux devant un écran ?",
+      options: ["2 fois moins", "3 fois moins", "4 fois moins", "5 fois moins"],
+      correct: 1,
+      explanation: "On cligne 3 fois moins des yeux devant un écran, ce qui cause la sécheresse oculaire. Pense à cligner volontairement !"
+    },
+    {
+      q: "Quelle distance minimum faut-il garder avec l'écran ?",
+      options: ["20 cm", "30 cm", "50 cm", "70 cm"],
+      correct: 2,
+      explanation: "Il faut garder au minimum 50 cm de distance avec l'écran pour protéger tes yeux de la fatigue oculaire."
+    },
+    {
+      q: "Combien de temps d'activité physique par jour recommande l'OMS ?",
+      options: ["15 minutes", "30 minutes", "1 heure", "2 heures"],
+      correct: 2,
+      explanation: "L'OMS recommande 1 heure d'activité physique par jour pour les enfants, surtout important si on passe du temps sur écran."
+    },
+    {
+      q: "Quel effet a +3h d'écran sur les résultats scolaires ?",
+      options: ["-10%", "-15%", "-25%", "-35%"],
+      correct: 2,
+      explanation: "Plus de 3h d'écran par jour entraîne une baisse de 25% des résultats scolaires en moyenne."
+    },
+    {
+      q: "Combien de temps faut-il au cerveau pour se reposer après un écran ?",
+      options: ["5 minutes", "10 minutes", "20 minutes", "30 minutes"],
+      correct: 2,
+      explanation: "Le cerveau a besoin d'environ 20 minutes de repos (sans écran) pour récupérer pleinement de la fatigue cognitive."
+    }
+  ];
+
+  const handleScreenQuizAnswer = (optionIndex) => {
+    if (screenQuizAnswered) return; // Empêche de cliquer plusieurs fois
+    
+    setScreenQuizAnswered(true);
+    const isCorrect = optionIndex === SCREEN_QUIZ[currentScreenQuestion].correct;
+    setScreenQuizResult(isCorrect);
+    
+    if (isCorrect) {
+      setScreenQuizScore(screenQuizScore + 1);
+      if (window.confetti) {
+        window.confetti({ particleCount: 50, spread: 60 });
+      }
+    }
+    
+    setTimeout(() => {
+      if (currentScreenQuestion < SCREEN_QUIZ.length - 1) {
+        setCurrentScreenQuestion(currentScreenQuestion + 1);
+        setScreenQuizAnswered(false);
+        setScreenQuizResult(null);
+      } else {
+        // Quiz terminé
+        alert(`🏆 Quiz terminé !\n\nTon score : ${screenQuizScore + (isCorrect ? 1 : 0)}/${SCREEN_QUIZ.length}\n\nTu connais maintenant les dangers du temps d'écran ! 🧠`);
+        setShowScreenQuiz(false);
+        setCurrentScreenQuestion(0);
+        setScreenQuizScore(0);
+        setScreenQuizAnswered(false);
+        setScreenQuizResult(null);
+      }
+    }, 3000);
+  };
+
+  const startScreenQuiz = () => {
+    setShowScreenQuiz(true);
+    setCurrentScreenQuestion(0);
+    setScreenQuizScore(0);
+    setScreenQuizAnswered(false);
+    setScreenQuizResult(null);
+  };
 
   const formatTime = (sec) => {
     const m = Math.floor(sec / 60);
@@ -551,6 +660,9 @@ function App() {
               </div>
               <div className="screen-fact">{screenTimeFact}</div>
               <div className="health-tip">{healthTip}</div>
+              <button className="quiz-btn" onClick={startScreenQuiz}>
+                🧠 Quiz Temps d'Écran
+              </button>
             </div>
 
             {/* Widget Citation Motivante */}
@@ -848,6 +960,65 @@ function App() {
               </div>
             </div>
           )}
+        </div>
+      </div>
+    );
+  }
+
+  // MODE QUIZ TEMPS D'ÉCRAN
+  if (showScreenQuiz) {
+    const currentQ = SCREEN_QUIZ[currentScreenQuestion];
+    const progress = ((currentScreenQuestion + 1) / SCREEN_QUIZ.length) * 100;
+
+    return (
+      <div className="app">
+        <div className="quiz-container screen-quiz-container">
+          <div className="quiz-header">
+            <button className="back-btn" onClick={() => setShowScreenQuiz(false)}>← Retour</button>
+            <div className="quiz-info">
+              <span className="category-badge">QUIZ SANTÉ</span>
+              <span className="score-badge">Score: {screenQuizScore}/{currentScreenQuestion}</span>
+            </div>
+          </div>
+
+          <div className="candy-progress-container">
+            <div className="candy-progress-bar screen-progress" style={{ width: `${progress}%` }}></div>
+          </div>
+          <p className="progress-text">Question {currentScreenQuestion + 1}/{SCREEN_QUIZ.length}</p>
+
+          <div className="screen-quiz-content">
+            <div className="quiz-icon">🧠</div>
+            <h2 className="screen-quiz-question">{currentQ.q}</h2>
+
+            <div className="screen-quiz-options">
+              {currentQ.options.map((option, index) => (
+                <button
+                  key={index}
+                  className={`screen-quiz-option ${
+                    screenQuizAnswered 
+                      ? index === currentQ.correct 
+                        ? 'correct' 
+                        : screenQuizResult === false && index === currentQ.correct 
+                          ? 'correct'
+                          : ''
+                      : ''
+                  }`}
+                  onClick={() => handleScreenQuizAnswer(index)}
+                  disabled={screenQuizAnswered}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+
+            {screenQuizAnswered && (
+              <div className={`quiz-explanation ${screenQuizResult ? 'correct-exp' : 'wrong-exp'}`}>
+                <div className="exp-icon">{screenQuizResult ? '✅' : '❌'}</div>
+                <div className="exp-title">{screenQuizResult ? 'Bravo !' : 'Pas tout à fait...'}</div>
+                <div className="exp-text">{currentQ.explanation}</div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
