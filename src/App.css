@@ -465,6 +465,186 @@ body {
   text-align: center;
 }
 
+/* WIDGET SANTÉ ÉCRAN */
+.screen-health-widget {
+  background: linear-gradient(135deg, rgba(67, 233, 123, 0.2), rgba(56, 249, 215, 0.2));
+  border-color: rgba(67, 233, 123, 0.5);
+  transition: all 0.5s ease;
+}
+
+.screen-health-widget.warning {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+  border-color: rgba(251, 191, 36, 0.5);
+  animation: pulse-warning 2s infinite;
+}
+
+.screen-health-widget.critical {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+  border-color: rgba(239, 68, 68, 0.5);
+  animation: pulse-critical 1.5s infinite;
+}
+
+@keyframes pulse-warning {
+  0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3); }
+  50% { transform: scale(1.02); box-shadow: 0 15px 40px rgba(251, 191, 36, 0.5); }
+}
+
+@keyframes pulse-critical {
+  0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4); }
+  50% { transform: scale(1.03); box-shadow: 0 20px 50px rgba(239, 68, 68, 0.6); }
+}
+
+.widget-header-screen {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.screen-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+}
+
+.screen-info {
+  flex: 1;
+}
+
+.screen-title {
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.screen-time {
+  color: #FFD700;
+  font-size: 2rem;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.6);
+}
+
+.screen-fact {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 12px 15px;
+  border-radius: 15px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 10px 0;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  line-height: 1.5;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.health-tip {
+  background: rgba(67, 233, 123, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 10px 15px;
+  border-radius: 12px;
+  color: white;
+  font-size: 0.85rem;
+  font-style: italic;
+  border: 2px solid rgba(67, 233, 123, 0.3);
+  margin-top: 10px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ALERTE PLEIN ÉCRAN TEMPS D'ÉCRAN */
+.screen-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.4s ease;
+}
+
+.screen-alert-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 243, 250, 0.95));
+  backdrop-filter: blur(30px);
+  padding: 50px 40px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 
+    0 40px 100px rgba(239, 68, 68, 0.6),
+    inset 0 -3px 30px rgba(255, 255, 255, 0.6),
+    0 0 0 15px rgba(255, 255, 255, 0.8);
+  border-radius: 45px;
+  border: 6px solid rgba(239, 68, 68, 0.7);
+  animation: zoomShake 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes zoomShake {
+  0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+  50% { transform: scale(1.1) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.alert-icon {
+  font-size: 6rem;
+  margin-bottom: 20px;
+  animation: shake 0.5s infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.alert-title {
+  font-size: 2.5rem;
+  color: #DC2626;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-shadow: 0 3px 15px rgba(220, 38, 38, 0.4);
+}
+
+.alert-message {
+  font-size: 1.3rem;
+  color: #374151;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.alert-message strong {
+  color: #DC2626;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.alert-fact {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+  border: 3px solid rgba(239, 68, 68, 0.3);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 25px 0;
+  font-size: 1.1rem;
+  color: #DC2626;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.alert-actions {
+  margin-top: 30px;
+}
+
+.alert-actions .btn-primary {
+  font-size: 1.3rem;
+  padding: 18px 40px;
+  background: linear-gradient(135deg, #DC2626, #EF4444);
+}
+
 .section-title {
   color: white;
   font-size: 1.5rem;
