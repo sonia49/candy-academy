@@ -294,12 +294,14 @@ function App() {
     else if (minutes >= 60) category = 'high'; // 1h+
     else if (minutes >= 30) category = 'moderate'; // 30min+
     
-    // Changer le fait toutes les minutes
+    // CHANGEMENT MANUEL avec flèches (pas automatique)
     const factsList = SCREEN_TIME_FACTS[category];
-    const randomFact = factsList[Math.floor(Math.random() * factsList.length)];
-    setScreenTimeFact(randomFact);
+    if (!screenTimeFact || factsList.indexOf(screenTimeFact) === -1) {
+      // Initialiser avec le premier fait de la catégorie
+      setScreenTimeFact(factsList[0]);
+    }
     
-    // Conseil santé aléatoire
+    // Conseil santé aléatoire (changement lent)
     const randomTip = HEALTH_TIPS[Math.floor(Math.random() * HEALTH_TIPS.length)];
     setHealthTip(randomTip);
     
@@ -308,7 +310,36 @@ function App() {
       setShowScreenAlert(true);
       setTimeout(() => setShowScreenAlert(false), 10000); // 10 secondes
     }
-  }, [totalScreenTime]);
+  }, [Math.floor(totalScreenTime / 3600)]); // Ne change que quand l'heure change
+
+  // Fonctions pour naviguer entre les faits
+  const nextScreenFact = () => {
+    const minutes = Math.floor(totalScreenTime / 60);
+    let category = 'low';
+    if (minutes >= 180) category = 'extreme';
+    else if (minutes >= 120) category = 'critical';
+    else if (minutes >= 60) category = 'high';
+    else if (minutes >= 30) category = 'moderate';
+    
+    const factsList = SCREEN_TIME_FACTS[category];
+    const currentIndex = factsList.indexOf(screenTimeFact);
+    const nextIndex = (currentIndex + 1) % factsList.length;
+    setScreenTimeFact(factsList[nextIndex]);
+  };
+
+  const prevScreenFact = () => {
+    const minutes = Math.floor(totalScreenTime / 60);
+    let category = 'low';
+    if (minutes >= 180) category = 'extreme';
+    else if (minutes >= 120) category = 'critical';
+    else if (minutes >= 60) category = 'high';
+    else if (minutes >= 30) category = 'moderate';
+    
+    const factsList = SCREEN_TIME_FACTS[category];
+    const currentIndex = factsList.indexOf(screenTimeFact);
+    const prevIndex = (currentIndex - 1 + factsList.length) % factsList.length;
+    setScreenTimeFact(factsList[prevIndex]);
+  };
 
   // Change quote toutes les 30 secondes
   useEffect(() => {
@@ -318,12 +349,65 @@ function App() {
     return () => clearInterval(quoteInterval);
   }, []);
 
+  // MISE À JOUR HUMEUR & ÉNERGIE
+  useEffect(() => {
+    const minutes = Math.floor(totalScreenTime / 60);
+    const newEnergy = Math.max(0, 100 - (minutes * 8)); // -8% par 6 minutes d'écran
+    setEnergy(newEnergy);
+    
+    // Changer l'humeur selon énergie, brain power et motivation
+    if (energy < 20 || brainPower < 20) {
+      setMood('fatigué');
+    } else if (energy > 80 && brainPower > 70) {
+      setMood('énergique');
+    } else if (brainPower > 50 && motivation > 70) {
+      setMood('concentré');
+    } else {
+      setMood('joyeux');
+    }
+  }, [totalScreenTime, brainPower, motivation, energy]);
+
   // QUIZ TEMPS D'ÉCRAN - ÉDUCATIF
   const [showScreenQuiz, setShowScreenQuiz] = useState(false);
   const [currentScreenQuestion, setCurrentScreenQuestion] = useState(0);
   const [screenQuizScore, setScreenQuizScore] = useState(0);
   const [screenQuizAnswered, setScreenQuizAnswered] = useState(false);
   const [screenQuizResult, setScreenQuizResult] = useState(null);
+
+  // WIDGET TACHE DE PEINTURE - HUMEUR & ÉNERGIE
+  const [mood, setMood] = useState('joyeux');
+  const [energy, setEnergy] = useState(100);
+
+  const MOOD_DATA = {
+    joyeux: { 
+      emoji: '😊', 
+      color: '#FFB4D4', 
+      message: 'Tu te sens bien !', 
+      gradient: 'linear-gradient(135deg, #FFB4D4, #FFA8D5)',
+      blob: 'blob1'
+    },
+    concentré: { 
+      emoji: '🤓', 
+      color: '#667eea', 
+      message: 'Tu es concentré !', 
+      gradient: 'linear-gradient(135deg, #667eea, #764ba2)',
+      blob: 'blob2'
+    },
+    fatigué: { 
+      emoji: '😴', 
+      color: '#FFA07A', 
+      message: 'Tu sembles fatigué...', 
+      gradient: 'linear-gradient(135deg, #FFA07A, #FFB347)',
+      blob: 'blob3'
+    },
+    énergique: { 
+      emoji: '🚀', 
+      color: '#43E97B', 
+      message: 'Plein d\'énergie !', 
+      gradient: 'linear-gradient(135deg, #43E97B, #38F9D7)',
+      blob: 'blob4'
+    }
+  };
 
   const SCREEN_QUIZ = [
     {
@@ -649,6 +733,28 @@ function App() {
 
           {/* WIDGETS INNOVANTS */}
           <div className="widgets-container">
+            {/* Widget Tache de Peinture - HUMEUR & ÉNERGIE */}
+            <div className="widget paint-splash-widget">
+              <div className={`paint-blob ${MOOD_DATA[mood].blob}`} style={{ background: MOOD_DATA[mood].gradient }}></div>
+              <div className="paint-content">
+                <div className="paint-emoji">{MOOD_DATA[mood].emoji}</div>
+                <div className="paint-message">{MOOD_DATA[mood].message}</div>
+                <div className="energy-container">
+                  <div className="energy-label">💪 Énergie</div>
+                  <div className="energy-bar-container">
+                    <div 
+                      className="energy-bar-fill" 
+                      style={{ 
+                        width: `${energy}%`,
+                        background: MOOD_DATA[mood].gradient
+                      }}
+                    ></div>
+                  </div>
+                  <div className="energy-value">{energy}%</div>
+                </div>
+              </div>
+            </div>
+
             {/* Widget Santé Écran - NOUVEAU */}
             <div className={`widget screen-health-widget ${totalScreenTime >= 7200 ? 'critical' : totalScreenTime >= 3600 ? 'warning' : ''}`}>
               <div className="widget-header-screen">
@@ -658,7 +764,13 @@ function App() {
                   <div className="screen-time">{formatTime(totalScreenTime)}</div>
                 </div>
               </div>
-              <div className="screen-fact">{screenTimeFact}</div>
+              
+              <div className="fact-navigation">
+                <button className="fact-arrow" onClick={prevScreenFact}>←</button>
+                <div className="screen-fact">{screenTimeFact}</div>
+                <button className="fact-arrow" onClick={nextScreenFact}>→</button>
+              </div>
+              
               <div className="health-tip">{healthTip}</div>
               <button className="quiz-btn" onClick={startScreenQuiz}>
                 🧠 Quiz Temps d'Écran
